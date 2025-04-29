@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "543008005063",
+    "project_id": "ttt-by-ll",
+    "storage_bucket": "ttt-by-ll.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:543008005063:android:0a7b9926947ee090da97e2",
+        "android_client_info": {
+          "package_name": "com.example.tic_tac_toe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAja3bYBkDJ7SHZXQ3Sqara8YZVSXHHBhA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
