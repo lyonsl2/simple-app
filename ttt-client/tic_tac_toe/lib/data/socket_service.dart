@@ -1,42 +1,48 @@
 import 'dart:async';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'dart:convert';
+import 'package:web_socket_channel/status.dart' as status;
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class SocketService {
-  late IO.Socket _socket;
-  final _controller = StreamController<dynamic>.broadcast();
+  WebSocketChannel? _channel;
+  late final StreamController _broadcast;
 
-  Stream<dynamic> get messages => _controller.stream;
+  SocketService() {
+    _broadcast = StreamController.broadcast();
+  }
 
-  void connect({required String authToken}) {
+  void connect() {
+    if (_channel != null) {
+      print('not connecting!!!');
+      return;
+    }
     print('connect!!!');
-    _socket = IO.io('http://10.0.2.2:3000', <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-      'auth': {'token': authToken},
-    });
 
-    _socket.connect();
+    final wsUrl = Uri.parse(
+      'wss://m1wffjfqlh.execute-api.us-east-1.amazonaws.com/Prod',
+    );
+    _channel = WebSocketChannel.connect(wsUrl);
 
-    _socket.onConnect((_) {
-      print('Socket connected');
-    });
-
-    _socket.onDisconnect((_) {
-      print('Socket disconnected');
-    });
-
-    _socket.on('message', (data) {
-      print(data);
-      _controller.add(data); // Push incoming data to stream
+    _channel!.stream.listen((data) {
+      _broadcast.add(data);
     });
   }
 
-  void sendMessage(dynamic data) {
-    _socket.emit('message', data);
+  Stream<dynamic> get stream {
+    if (_channel == null) {
+      throw Exception('WebSocket is not connected. Call connect() first.');
+    }
+    return _broadcast.stream;
   }
 
-  void disconnect() {
-    _socket.disconnect();
-    _controller.close();
+  void sendMessage(String message) {
+    if (_channel == null) {
+      throw Exception('WebSocket is not connected. Call connect() first.');
+    }
+    _channel!.sink.add(message);
+  }
+
+  void dispose() {
+    _channel?.sink.close();
   }
 }

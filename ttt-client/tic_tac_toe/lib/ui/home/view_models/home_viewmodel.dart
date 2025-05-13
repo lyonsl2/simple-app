@@ -1,30 +1,20 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:tic_tac_toe/data/socket_service.dart';
+import 'package:tic_tac_toe/data/auth_repository.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  late final SocketService _socketService;
-  HomeViewModel({required SocketService socketService}) {
+  final AuthRepository _authRepository;
+  int _currentIndex = 0;
+
+  int get currentIndex => _currentIndex;
+
+  HomeViewModel({required AuthRepository authRepository})
+    : _authRepository = authRepository {
     print('HomeViewModel!!!');
-    _socketService = socketService;
-
-    _socketService.connect(authToken: '');
-
-    _subscription = _socketService.messages.listen((data) {
-      _messages.add(data);
-      notifyListeners();
-    });
   }
 
-  late final StreamSubscription _subscription;
-  final List<String> _messages = ['Message 1'];
-
-  List<String> get messages => List.unmodifiable(_messages);
-
-  @override
-  void dispose() {
-    _subscription.cancel();
-    _socketService.disconnect();
-    super.dispose();
+  void setCurrentIndex(int index) {
+    print(index);
+    _currentIndex = index;
+    notifyListeners();
   }
 }
